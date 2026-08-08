@@ -25,27 +25,41 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Contact Form Route
 app.post("/contact", async (req, res) => {
+
     try {
-        const { name, email, message } = req.body;
+
+        const { name, email, subject, message } = req.body;
 
         const newContact = new Contact({
             name,
             email,
+            subject,
             message
         });
 
         await newContact.save();
 
-        res.redirect("/"); // Redirect to home page after successful submission 
+        res.status(200).json({
+            success: true,
+            message: "Message sent successfully!"
+        });
+
     } catch (err) {
+
         console.error(err);
-        res.status(500).send("Server Error");
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error"
+        });
+
     }
+
 });
 
 // Start Server
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:3000`);
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
